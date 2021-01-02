@@ -1,5 +1,5 @@
-﻿using System.Data;
-using System.Data.SqlClient;
+﻿using Microsoft.Data.Sqlite;
+using System.Data;
 using System.Linq;
 using Vrnz2.Infra.Repository.Abstract;
 using Vrnz2.Infra.Repository.Settings;
@@ -15,9 +15,10 @@ namespace Vrnz2.Infra.Repository.Test.Data
 
         public UnitOfWork(ConnectionStrings connectionStrings, IRepository repository)
         {
-            var connectionString = connectionStrings.ConnectionsStrings.SingleOrDefault(s => "MyDatabase".Equals(s.Name));
+            var connectionString = connectionStrings.ConnectionsStrings.SingleOrDefault(s => "AuthDb".Equals(s.Name));
 
-            _connection = new SqlConnection(connectionString.Value);
+            _connection = new SqliteConnection(connectionString.Value);
+
             _repositories.Add(repository.TableName, repository);
         }
 

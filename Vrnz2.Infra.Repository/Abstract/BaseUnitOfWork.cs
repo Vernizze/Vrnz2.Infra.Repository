@@ -40,11 +40,12 @@ namespace Vrnz2.Infra.Repository.Abstract
 
         protected abstract void InitReps(IDbTransaction sqlConnection);
 
-        public IBaseRepository GetRepository(string table_name)
+        public TRepository GetRepository<TRepository>(string table_name)
+            where TRepository : class, IBaseRepository
         {
             this._repositories.TryGetValue(table_name, out IBaseRepository result);
 
-            return result;
+            return result as TRepository;
         }
 
         public void OpenConnection()

@@ -5,6 +5,6 @@ namespace Vrnz2.Infra.Repository.Test.Data
     public interface IRepository
         : IBaseRepository
     {
-        Entity GetByNome(string nome);
+        User GetByLogin(string login);
     }
 }

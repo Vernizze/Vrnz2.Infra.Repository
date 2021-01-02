@@ -13,6 +13,7 @@ namespace Vrnz2.Infra.Repository.Interfaces.Base
 
         IDbConnection Connection { get; }
 
-        IBaseRepository GetRepository(string table_name);
+        TRepository GetRepository<TRepository>(string table_name)
+            where TRepository : class, IBaseRepository;
     }
 }

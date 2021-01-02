@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using System.Collections.Generic;
 using System.Data;
+using Vrnz2.Infra.CrossCutting.Extensions;
 using Vrnz2.Infra.Repository.Interfaces.Base;
 
 namespace Vrnz2.Infra.Repository.Abstract
@@ -10,7 +11,7 @@ namespace Vrnz2.Infra.Repository.Abstract
     {
         #region Variables
 
-        protected IDbTransaction _dbTransaction;
+        protected IDbTransaction _dbTransaction = null;
         protected IDbConnection _dbConnection;
 
         #endregion  
@@ -80,44 +81,19 @@ namespace Vrnz2.Infra.Repository.Abstract
         }
 
         protected T QueryFirstOrDefault<T>(string query, object parms = null)
-            => _dbConnection.QueryFirstOrDefault<T>(query, parms, this._dbTransaction);
+        {
+            if (this._dbTransaction.IsNull())
+                return _dbConnection.QueryFirstOrDefault<T>(query, parms);
+            else
+                return _dbConnection.QueryFirstOrDefault<T>(query, parms, this._dbTransaction);
+        }
 
         protected IEnumerable<T> Query<T>(string query, object parms = null)
-            => _dbConnection.Query<T>(query, parms, this._dbTransaction);
-
-        void IBaseRepository.Init(IDbConnection sqlConnection)
         {
-            throw new System.NotImplementedException();
-        }
-
-        void IBaseRepository.Init(IDbTransaction sqlTransaction)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        bool IBaseRepository.Insert<T>(T value)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        IEnumerable<T> IBaseRepository.Get<T>()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        T IBaseRepository.GetById<T>(string Id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        T IBaseRepository.GetByRefCode<T>(int RefCode)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        bool IBaseRepository.DeleteAll()
-        {
-            throw new System.NotImplementedException();
+            if (this._dbTransaction.IsNull())
+                return _dbConnection.Query<T>(query, parms);
+            else
+                return _dbConnection.Query<T>(query, parms, this._dbTransaction);
         }
 
         #endregion
