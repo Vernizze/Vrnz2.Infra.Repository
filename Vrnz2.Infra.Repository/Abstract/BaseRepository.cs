@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using Vrnz2.Infra.CrossCutting.Extensions;
 using Vrnz2.Infra.Repository.Interfaces.Base;
 
@@ -88,12 +89,28 @@ namespace Vrnz2.Infra.Repository.Abstract
                 return _dbConnection.QueryFirstOrDefault<T>(query, parms, this._dbTransaction);
         }
 
+        protected async Task<T> QueryFirstOrDefaultAsync<T>(string query, object parms = null)
+        {
+            if (this._dbTransaction.IsNull())
+                return await _dbConnection.QueryFirstOrDefaultAsync<T>(query, parms);
+            else
+                return await _dbConnection.QueryFirstOrDefaultAsync<T>(query, parms, this._dbTransaction);
+        }
+
         protected IEnumerable<T> Query<T>(string query, object parms = null)
         {
             if (this._dbTransaction.IsNull())
                 return _dbConnection.Query<T>(query, parms);
             else
                 return _dbConnection.Query<T>(query, parms, this._dbTransaction);
+        }
+
+        protected async Task<IEnumerable<T>> QueryAsync<T>(string query, object parms = null)
+        {
+            if (this._dbTransaction.IsNull())
+                return await _dbConnection.QueryAsync<T>(query, parms);
+            else
+                return await _dbConnection.QueryAsync<T>(query, parms, this._dbTransaction);
         }
 
         #endregion
