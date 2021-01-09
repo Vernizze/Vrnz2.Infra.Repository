@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -17,11 +18,22 @@ namespace Vrnz2.Infra.Repository.Abstract
 
         protected Dictionary<string, IBaseRepository> _repositories = new Dictionary<string, IBaseRepository>();
 
+        protected IServiceCollection _services;
+
         #endregion
 
         #region Attributes
 
         public IDbConnection Connection { get; }
+
+        #endregion
+
+        #region Constructors
+
+        public BaseUnitOfWork() 
+        {
+            _services = new ServiceCollection();
+        }
 
         #endregion
 
@@ -36,6 +48,10 @@ namespace Vrnz2.Infra.Repository.Abstract
                 this._connection.Close();
         }
 
+        public void AddRepository<TRepository>()
+            where TRepository : BaseRepository, IBaseRepository
+            => _services.AddScoped<TRepository>();
+
         public abstract void InitReps(IDbConnection sqlConnection);
 
         protected abstract void InitReps(IDbTransaction sqlConnection);
@@ -48,12 +64,19 @@ namespace Vrnz2.Infra.Repository.Abstract
             return result as TRepository;
         }
 
+        public TRepository GetRepository<TRepository>()
+            => _services.BuildServiceProvider().GetService<TRepository>();
+
         public void OpenConnection()
         {
+            AddRepositories();            
+
             this._connection.Open();
 
             this.InitReps(this._connection);
         }
+
+        protected abstract void AddRepositories();
 
         public void Begin()
         {

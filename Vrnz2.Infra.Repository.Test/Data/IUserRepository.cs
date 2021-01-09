@@ -2,7 +2,7 @@
 
 namespace Vrnz2.Infra.Repository.Test.Data
 {
-    public interface IRepository
+    public interface IUserRepository
         : IBaseRepository
     {
         User GetByLogin(string login);

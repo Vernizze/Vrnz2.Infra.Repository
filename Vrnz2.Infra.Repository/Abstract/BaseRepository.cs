@@ -12,8 +12,8 @@ namespace Vrnz2.Infra.Repository.Abstract
     {
         #region Variables
 
-        protected IDbTransaction _dbTransaction = null;
-        protected IDbConnection _dbConnection;
+        private IDbTransaction _dbTransaction = null;
+        private IDbConnection _dbConnection;
 
         #endregion  
 
@@ -111,6 +111,22 @@ namespace Vrnz2.Infra.Repository.Abstract
                 return await _dbConnection.QueryAsync<T>(query, parms);
             else
                 return await _dbConnection.QueryAsync<T>(query, parms, this._dbTransaction);
+        }
+
+        protected int Execute(string query, object parms = null)
+        {
+            if (this._dbTransaction.IsNull())
+                return _dbConnection.Execute(query, parms);
+            else
+                return _dbConnection.Execute(query, parms, this._dbTransaction);
+        }
+
+        protected async Task<int> ExecuteAsync(string query, object parms = null)
+        {
+            if (this._dbTransaction.IsNull())
+                return await _dbConnection.ExecuteAsync(query, parms);
+            else
+                return await _dbConnection.ExecuteAsync(query, parms, this._dbTransaction);
         }
 
         #endregion

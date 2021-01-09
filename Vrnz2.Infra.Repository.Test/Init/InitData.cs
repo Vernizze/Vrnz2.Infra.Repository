@@ -25,7 +25,6 @@ namespace Vrnz2.Infra.Repository.Test.Init
         }
 
         public IUnitOfWork GetUnitOfWork { get; private set; }
-        public IRepository GetRepository { get; private set; }
 
         public void Dispose()
             => GetUnitOfWork.Dispose();
@@ -39,15 +38,12 @@ namespace Vrnz2.Infra.Repository.Test.Init
             var services = new ServiceCollection()
                 .AddSingleton(_ => appSettings)
                 .AddSingleton(_ => appSettings.ConnectionStrings)
-                .AddTransient<IRepository, Vrnz2.Infra.Repository.Test.Data.Repository>()
+                //.AddTransient<IUserRepository, Vrnz2.Infra.Repository.Test.Data.UserRepository>()
                 .AddScoped<IUnitOfWork, UnitOfWork>();
 
             var provider = services.BuildServiceProvider();
 
             GetUnitOfWork = provider.GetService<IUnitOfWork>();
-            GetRepository = provider.GetService<IRepository>();
-
-            GetUnitOfWork.OpenConnection();
         }
     }
 }

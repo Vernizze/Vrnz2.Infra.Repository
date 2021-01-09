@@ -14,9 +14,12 @@ namespace Vrnz2.Infra.Repository.Test
         {
             var unitOfWork = InitData.Instance.GetUnitOfWork;
 
-            var repository = unitOfWork.GetRepository<Vrnz2.Infra.Repository.Test.Data.Repository>(nameof(User));
+            var userRepository = unitOfWork.GetRepository<Vrnz2.Infra.Repository.Test.Data.UserRepository>();
+            var personRepository = unitOfWork.GetRepository<Vrnz2.Infra.Repository.Test.Data.PersonRepository>();
 
-            var result = repository.GetByLogin("vernizze");
+            unitOfWork.OpenConnection();
+
+            var result = userRepository.GetByLogin("vernizze");
 
             InitData.Instance.Dispose();
         }

@@ -13,6 +13,11 @@ namespace Vrnz2.Infra.Repository.Interfaces.Base
 
         IDbConnection Connection { get; }
 
+        void AddRepository<TRepository>()
+            where TRepository : Abstract.BaseRepository, IBaseRepository;
+
+        TRepository GetRepository<TRepository>();
+
         TRepository GetRepository<TRepository>(string table_name)
             where TRepository : class, IBaseRepository;
     }

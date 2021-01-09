@@ -3,13 +3,13 @@ using Vrnz2.Infra.Repository.Abstract;
 
 namespace Vrnz2.Infra.Repository.Test.Data
 {
-    public class Repository
-        : BaseRepository, IRepository
+    public class UserRepository
+        : BaseRepository, IUserRepository
     {
-        public Repository()
+        public UserRepository()
             => TableName = nameof(User);
 
-        public override bool Insert<Filial>(Filial value)
+        public override bool Insert<TEntity>(TEntity value)
         => true;
 
         public User GetByLogin(string login)
