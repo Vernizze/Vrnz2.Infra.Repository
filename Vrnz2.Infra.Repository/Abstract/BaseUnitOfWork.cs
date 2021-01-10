@@ -9,7 +9,7 @@ using Vrnz2.Infra.Repository.Interfaces.Base;
 namespace Vrnz2.Infra.Repository.Abstract
 {
     public abstract class BaseUnitOfWork
-            : IUnitOfWork
+        : IUnitOfWork
     {
         #region Variables
 
@@ -48,9 +48,19 @@ namespace Vrnz2.Infra.Repository.Abstract
                 this._connection.Close();
         }
 
-        public void AddRepository<TRepository>()
-            where TRepository : BaseRepository, IBaseRepository
-            => _services.AddScoped<TRepository>();
+        public IUnitOfWork AddRepository<IRepository, TRepository>()
+            where IRepository : class, IBaseRepository
+            where TRepository : BaseRepository, IRepository
+        {
+            var repository = _services
+                .AddScoped<IRepository, TRepository>()
+                .BuildServiceProvider()
+                .GetService<IRepository>();
+
+            _repositories.Add(repository.TableName, repository);
+
+            return this;
+        }
 
         public abstract void InitReps(IDbConnection sqlConnection);
 
@@ -69,14 +79,10 @@ namespace Vrnz2.Infra.Repository.Abstract
 
         public void OpenConnection()
         {
-            AddRepositories();            
-
             this._connection.Open();
 
             this.InitReps(this._connection);
         }
-
-        protected abstract void AddRepositories();
 
         public void Begin()
         {

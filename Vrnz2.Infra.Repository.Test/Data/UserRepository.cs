@@ -1,5 +1,4 @@
-﻿using Dapper;
-using Vrnz2.Infra.Repository.Abstract;
+﻿using Vrnz2.Infra.Repository.Abstract;
 
 namespace Vrnz2.Infra.Repository.Test.Data
 {
@@ -10,7 +9,7 @@ namespace Vrnz2.Infra.Repository.Test.Data
             => TableName = nameof(User);
 
         public override bool Insert<TEntity>(TEntity value)
-        => true;
+            => true;
 
         public User GetByLogin(string login)
             => QueryFirstOrDefault<User>("SELECT * FROM User WHERE Login = @login;", new { login });
