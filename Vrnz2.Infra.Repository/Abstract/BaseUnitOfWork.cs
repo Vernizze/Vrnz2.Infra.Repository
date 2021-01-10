@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using Vrnz2.Infra.CrossCutting.Extensions;
 using Vrnz2.Infra.Repository.Interfaces.Base;
 
@@ -62,9 +63,11 @@ namespace Vrnz2.Infra.Repository.Abstract
             return this;
         }
 
-        public abstract void InitReps(IDbConnection sqlConnection);
+        public virtual void InitReps(IDbConnection dbConnection)
+            => _repositories.ToList().ForEach(r => r.Value.Init(dbConnection));
 
-        protected abstract void InitReps(IDbTransaction sqlConnection);
+        protected virtual void InitReps(IDbTransaction dbTransaction)
+            => _repositories.ToList().ForEach(r => r.Value.Init(dbTransaction));
 
         public TRepository GetRepository<TRepository>(string table_name)
             where TRepository : class, IBaseRepository
@@ -73,9 +76,6 @@ namespace Vrnz2.Infra.Repository.Abstract
 
             return result as TRepository;
         }
-
-        public TRepository GetRepository<TRepository>()
-            => _services.BuildServiceProvider().GetService<TRepository>();
 
         public void OpenConnection()
         {

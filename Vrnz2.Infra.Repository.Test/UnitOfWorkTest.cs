@@ -1,3 +1,4 @@
+using Vrnz2.Infra.Repository.Test.Data;
 using Vrnz2.Infra.Repository.Test.Init;
 using Xunit;
 
@@ -10,8 +11,8 @@ namespace Vrnz2.Infra.Repository.Test
         {
             var unitOfWork = InitData.Instance.GetUnitOfWork;
 
-            var userRepository = unitOfWork.GetRepository<Vrnz2.Infra.Repository.Test.Data.IUserRepository>();
-            var personRepository = unitOfWork.GetRepository<Vrnz2.Infra.Repository.Test.Data.IPersonRepository>();
+            var userRepository = unitOfWork.GetRepository<Vrnz2.Infra.Repository.Test.Data.IUserRepository>(nameof(User));
+            var personRepository = unitOfWork.GetRepository<Vrnz2.Infra.Repository.Test.Data.IPersonRepository>(nameof(Person));
 
             unitOfWork.OpenConnection();
 

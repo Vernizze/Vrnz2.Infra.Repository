@@ -17,8 +17,6 @@ namespace Vrnz2.Infra.Repository.Interfaces.Base
             where IRepository : class, IBaseRepository
             where TRepository : Abstract.BaseRepository, IRepository;
 
-        TRepository GetRepository<TRepository>();
-
         TRepository GetRepository<TRepository>(string table_name)
             where TRepository : class, IBaseRepository;
     }
