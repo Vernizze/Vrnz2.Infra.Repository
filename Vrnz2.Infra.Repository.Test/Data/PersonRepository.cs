@@ -1,4 +1,5 @@
-﻿using Vrnz2.Infra.Repository.Abstract;
+﻿using System.Threading.Tasks;
+using Vrnz2.Infra.Repository.Abstract;
 
 namespace Vrnz2.Infra.Repository.Test.Data
 {
@@ -8,7 +9,7 @@ namespace Vrnz2.Infra.Repository.Test.Data
         public PersonRepository()
             => TableName = nameof(Person);
 
-        public override bool Insert<TEntity>(TEntity value)
-        => true;
+        public override Task<bool> InsertAsync<TEntity>(TEntity value)
+            => Task.FromResult(true);
     }
 }
