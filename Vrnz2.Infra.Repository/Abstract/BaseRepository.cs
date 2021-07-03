@@ -25,7 +25,7 @@ namespace Vrnz2.Infra.Repository.Abstract
 
         #region Methods
 
-        public abstract bool Insert<T>(T value) where T : BaseDataObject;
+        public abstract Task<bool> InsertAsync<T>(T value) where T : BaseDataObject;
 
         public virtual void Init(IDbConnection dbConnection)
             => _dbConnection = dbConnection;
