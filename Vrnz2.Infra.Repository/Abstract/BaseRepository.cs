@@ -25,8 +25,6 @@ namespace Vrnz2.Infra.Repository.Abstract
 
         #region Methods
 
-        public abstract Task<bool> InsertAsync<T>(T value) where T : BaseDataObject;
-
         public virtual void Init(IDbConnection dbConnection)
             => _dbConnection = dbConnection;
 
@@ -35,50 +33,6 @@ namespace Vrnz2.Infra.Repository.Abstract
             this._dbTransaction = dbTransaction;
 
             this._dbConnection = this._dbTransaction.Connection;
-        }
-
-        public virtual IEnumerable<T> Get<T>()
-            where T : BaseDataObject
-        {
-            var sql = $"SELECT * FROM {TableName} WHERE Deleted = 0;";
-
-            return this.Query<T>(sql);
-        }
-
-        public virtual T GetById<T>(string Id)
-            where T : BaseDataObject
-        {
-            var sql = $"SELECT * FROM {TableName} WHERE Id = @Id;";
-
-            return this.QueryFirstOrDefault<T>(sql, new { Id });
-        }
-
-        public virtual T GetByRefCode<T>(int RefCode)
-            where T : BaseDataObject
-        {
-            var sql = $"SELECT * FROM {TableName} WHERE RefCode = @RefCode;";
-
-            return this.QueryFirstOrDefault<T>(sql, new { RefCode });
-        }
-
-        public virtual int GetTableLines()
-            => GetTableLines(TableName);
-
-
-        public virtual bool DeleteAll()
-        {
-            var sql = $"DELETE FROM {TableName};";
-
-            var res = this._dbConnection.Execute(sql, transaction: this._dbTransaction);
-
-            return res > 0;
-        }
-
-        protected virtual int GetTableLines(string table_name)
-        {
-            var sql = $"SELECT dbo.fn_GetTableLines('{table_name}') AS Count";
-
-            return this._dbConnection.QueryFirstOrDefault<int>(sql, new { table_name }, this._dbTransaction);
         }
 
         protected T QueryFirstOrDefault<T>(string query, object parms = null)
@@ -119,6 +73,14 @@ namespace Vrnz2.Infra.Repository.Abstract
                 return _dbConnection.Execute(query, parms);
             else
                 return _dbConnection.Execute(query, parms, this._dbTransaction);
+        }
+
+        protected async Task<object> ExecuteScalarAsync(string query, object parms = null)
+        {
+            if (this._dbTransaction.IsNull())
+                return await _dbConnection.ExecuteScalarAsync(query, parms);
+            else
+                return await _dbConnection.ExecuteScalarAsync(query, parms, this._dbTransaction);
         }
 
         protected async Task<int> ExecuteAsync(string query, object parms = null)
