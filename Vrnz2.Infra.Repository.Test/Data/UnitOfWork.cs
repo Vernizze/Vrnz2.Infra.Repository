@@ -11,7 +11,7 @@ namespace Vrnz2.Infra.Repository.Test.Data
     {
         #region Constructors
 
-        public UnitOfWork(ConnectionStrings connectionStrings)
+        public UnitOfWork(ConnectionStringsSettings connectionStrings)
         {
             var connectionString = connectionStrings.ConnectionsStrings.SingleOrDefault(s => "AuthDb".Equals(s.Name));
 

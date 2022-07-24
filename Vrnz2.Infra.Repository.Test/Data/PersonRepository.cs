@@ -8,8 +8,5 @@ namespace Vrnz2.Infra.Repository.Test.Data
     {
         public PersonRepository()
             => TableName = nameof(Person);
-
-        public override Task<bool> InsertAsync<TEntity>(TEntity value)
-            => Task.FromResult(true);
     }
 }

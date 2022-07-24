@@ -3,7 +3,7 @@ using Vrnz2.BaseContracts.Settings.Base;
 
 namespace Vrnz2.Infra.Repository.Settings
 {
-    public class ConnectionStrings
+    public class ConnectionStringsSettings
         : BaseAppSettings
     {
         public List<ConnectionString> ConnectionsStrings { get; set; }

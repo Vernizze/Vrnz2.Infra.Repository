@@ -6,6 +6,6 @@ namespace Vrnz2.Infra.Repository.Test.Init
     public class AppSettings
         : BaseAppSettings
     {
-        public ConnectionStrings ConnectionStrings { get; set; }
+        public ConnectionStringsSettings ConnectionStrings { get; set; }
     }
 }
