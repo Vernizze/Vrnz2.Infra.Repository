@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Vrnz2.Infra.CrossCutting.Extensions;
 using Vrnz2.Infra.Repository.Interfaces.Base;
@@ -12,8 +14,8 @@ namespace Vrnz2.Infra.Repository.Abstract
     {
         #region Variables
 
-        private IDbTransaction _dbTransaction = null;
-        private IDbConnection _dbConnection;
+        protected IDbTransaction _dbTransaction = null;
+        protected IDbConnection _dbConnection;
 
         #endregion  
 
@@ -90,6 +92,71 @@ namespace Vrnz2.Infra.Repository.Abstract
             else
                 return await _dbConnection.ExecuteAsync(query, parms, this._dbTransaction);
         }
+
+        public virtual async Task<bool> AddAsync<T>(T obj)
+        {
+            var result = false;
+
+            var properties = GetProperties<T>();
+
+            var sql = $"INSERT INTO {this.TableName}({JoinPropertiesInsert(properties)}) VALUES ({JoinPropertiesInsert(properties, true)});";
+
+            var res = await this.ExecuteAsync(sql, obj);
+
+            result = (res > 0);
+
+            return result;
+        }
+
+        public virtual async Task<bool> UpdateAsync<T>(T obj)
+        {
+            var properties = GetProperties<T>().Where(w => w.Name != "Id");
+
+            var sql = $"UPDATE {this.TableName} SET {JoinPropertiesUpdate(properties)} WHERE Id = @Id;";
+
+            await this.ExecuteAsync(sql, obj);
+
+            return true;
+        }
+
+        public virtual async Task<bool> DeleteAsync<T>(T obj)
+        {
+            var properties = GetProperties<T>().Where(w => w.Name != "Id");
+
+            var sql = $"DELETE FROM {this.TableName} WHERE Id = @Id;";
+
+            var res = await this._dbConnection.ExecuteAsync(sql, transaction: this._dbTransaction);
+
+            return res > 0;
+        }
+
+        #region Private Methods
+
+        private IEnumerable<PropertyInfo> GetProperties<T>()
+        {
+            return typeof(T).GetProperties().Where(w => !w.PropertyType.FullName.Contains("DataObjects") && !w.CustomAttributes.Any(c => c.AttributeType.Name.Contains("NotMapped")) && !w.PropertyType.FullName.Contains("Collection"));
+        }
+
+        private string JoinPropertiesInsert(IEnumerable<PropertyInfo> propertyInfo, bool isValues = false)
+        {
+            var caracter = isValues ? "@" : "";
+            return string.Join(",", propertyInfo.Select(s => $"{caracter}{s.Name}"));
+        }
+
+        private string JoinPropertiesUpdate(IEnumerable<PropertyInfo> propertyInfo)
+        {
+            var properties = string.Empty;
+
+            foreach (var item in propertyInfo)
+            {
+                var str = properties == "" ? "" : ",";
+                properties = $"{properties}{str} {item.Name} = @{item.Name}";
+            }
+
+            return properties;
+        }
+
+        #endregion
 
         #endregion
     }

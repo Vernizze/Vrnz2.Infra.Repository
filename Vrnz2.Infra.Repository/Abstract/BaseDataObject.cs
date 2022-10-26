@@ -28,12 +28,6 @@ namespace Vrnz2.Infra.Repository.Abstract
         [JsonIgnore]
         public bool Deleted { get; set; }
 
-        [JsonIgnore]
-        public bool Processed { get; set; }
-
-        [JsonIgnore]
-        public DateTimeOffset? ProcessedAt { get; set; }
-
         #endregion
     }
 }

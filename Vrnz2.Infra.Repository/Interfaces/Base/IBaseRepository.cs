@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
+using System.Threading.Tasks;
 
 namespace Vrnz2.Infra.Repository.Interfaces.Base
 {
@@ -9,5 +9,11 @@ namespace Vrnz2.Infra.Repository.Interfaces.Base
         void Init(IDbTransaction sqlTransaction);
 
         string TableName { get; }
+
+        Task<bool> AddAsync<T>(T obj);
+
+        Task<bool> UpdateAsync<T>(T obj);
+
+        Task<bool> DeleteAsync<T>(T obj);
     }
 }
