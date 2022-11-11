@@ -19,15 +19,6 @@ namespace Vrnz2.Infra.Repository.Abstract
 
         public string Id { get; set; }
 
-        [JsonIgnore]
-        public DateTimeOffset CreatedAt { get; set; }
-
-        [JsonIgnore]
-        public DateTimeOffset? UpdatedAt { get; set; }
-
-        [JsonIgnore]
-        public bool Deleted { get; set; }
-
         #endregion
     }
 }
